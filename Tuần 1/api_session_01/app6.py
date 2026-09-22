@@ -2,7 +2,6 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-# --- GỐC: Data và biến tăng tự động (Slide 24) ---
 _next = 3
 BOOKS = [
     {"id": 1, "title": "Clean Code", "author": "R. Martin", "year": 2008},
@@ -15,11 +14,9 @@ def find(bid):
 # --- 1. LIST & SEARCH (GET /books) ---
 @app.route("/books", methods=["GET"])
 def list_books():
-    # MỞ RỘNG (a) & (b): Lấy tham số tìm kiếm và sắp xếp
     q = request.args.get("q", "").strip().lower()
     sort_by = request.args.get("sort", "").strip().lower()
-    limit = int(request.args.get("limit", 100)) # Gốc: Giới hạn số lượng
-
+    limit = int(request.args.get("limit", 100))
     filtered_books = BOOKS
     
     # MỞ RỘNG (a): Tìm kiếm GET /books?q=...
@@ -33,7 +30,6 @@ def list_books():
     return jsonify(filtered_books[:limit]), 200
 
 # --- 2. DETAIL (GET /books/<id>) ---
-# GỐC (Hoàn toàn không có mở rộng)
 @app.route("/books/<int:bid>", methods=["GET"])
 def get_book(bid):
     book = find(bid)
@@ -49,7 +45,6 @@ def create_book():
     t = body.get("title")
     a = body.get("author")
     
-    # GỐC: Bắt buộc title và author
     if not t or not a:
         return jsonify({"error": "need title+author"}), 400
         
@@ -58,7 +53,6 @@ def create_book():
     if not isinstance(year, int) or year < 1900:
         return jsonify({"error": "year must be an integer >= 1900"}), 400
         
-    # GỐC: Thêm sách mới
     book = {"id": _next, "title": t, "author": a, "year": year}
     _next += 1
     BOOKS.append(book)
@@ -74,17 +68,15 @@ def modify_book(bid):
     if request.method == "PUT":
         body = request.get_json(silent=True) or {}
         
-        # MỞ RỘNG: Vì update (PUT) có thể thay đổi year, ta cũng cần validate
+        # MỞ RỘNG (c):
         if "year" in body:
             year = body["year"]
             if not isinstance(year, int) or year < 1900:
                 return jsonify({"error": "year must be an integer >= 1900"}), 400
                 
-        # GỐC: Cập nhật object book
         book.update(body)
         return jsonify(book), 200
         
-    # GỐC: method == DELETE
     BOOKS.remove(book)
     return "", 204
 

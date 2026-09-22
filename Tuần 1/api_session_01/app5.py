@@ -2,14 +2,14 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-# Giả lập Database
+
 ORDERS = {
     "1": {"id": "1", "status": "pending"},
     "2": {"id": "2", "status": "shipped"},
     "3": {"id": "3", "status": "delivered"}
 }
 
-# DELETE /orders/<id>
+# DELETE có đầy đủ status
 @app.route("/orders/<id>", methods=["DELETE"])
 def delete_order(id):
     order = ORDERS.get(id)
