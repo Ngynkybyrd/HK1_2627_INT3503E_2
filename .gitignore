@@ -15,3 +15,6 @@ principles-of-web-api-design-delivering-value-with-apis-and-microservices_compre
 extract_ch1.py
 geewax_start.txt
 higginbotham_start.txt
+
+# IDE settings
+.vscode/

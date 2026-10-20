@@ -1,0 +1,50 @@
+
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Loan",
+  "description": "Thông tin một lượt mượn và trả sách.",
+  "type": "object",
+  "properties": {
+    "loan_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Mã định danh duy nhất của lượt mượn."
+    },
+    "member_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Mã độc giả thực hiện lượt mượn."
+    },
+    "copy_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Mã bản sao sách được mượn."
+    },
+    "borrowed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm mượn sách."
+    },
+    "due_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời hạn phải trả sách."
+    },
+    "returned_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "Thời điểm trả sách; null nếu chưa trả."
+    }
+  },
+  "required": [
+    "member_id",
+    "copy_id",
+    "borrowed_at",
+    "due_at",
+    "returned_at"
+  ],
+  "additionalProperties": false
+}

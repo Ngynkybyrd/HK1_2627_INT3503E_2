@@ -1,0 +1,46 @@
+
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Member",
+  "description": "Thông tin độc giả của thư viện.",
+  "type": "object",
+  "properties": {
+    "member_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Mã định danh duy nhất của độc giả."
+    },
+    "full_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "Họ và tên độc giả."
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "maxLength": 255,
+      "description": "Địa chỉ email của độc giả."
+    },
+    "phone": {
+      "type": "string",
+      "maxLength": 20,
+      "description": "Số điện thoại của độc giả."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "INACTIVE"
+      ],
+      "description": "Trạng thái hoạt động của độc giả."
+    }
+  },
+  "required": [
+    "full_name",
+    "email",
+    "phone",
+    "status"
+  ],
+  "additionalProperties": false
+}

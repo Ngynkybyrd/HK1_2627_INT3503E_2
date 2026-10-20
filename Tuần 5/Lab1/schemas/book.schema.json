@@ -1,0 +1,41 @@
+
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Book",
+  "description": "Thông tin đầu sách trong hệ thống thư viện.",
+  "type": "object",
+  "properties": {
+    "book_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Mã định danh duy nhất của đầu sách."
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 255,
+      "description": "Tên đầu sách."
+    },
+    "isbn": {
+      "type": "string",
+      "maxLength": 17,
+      "description": "Mã ISBN của đầu sách."
+    },
+    "category": {
+      "type": "string",
+      "maxLength": 100,
+      "description": "Thể loại sách."
+    },
+    "published_year": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Năm xuất bản."
+    }
+  },
+  "required": [
+    "title",
+    "isbn",
+    "category",
+    "published_year"
+  ],
+  "additionalProperties": false
+}

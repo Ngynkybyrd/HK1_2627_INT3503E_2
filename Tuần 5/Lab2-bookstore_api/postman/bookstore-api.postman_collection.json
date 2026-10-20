@@ -1,0 +1,180 @@
+
+{
+  "info": {
+    "name": "Bookstore API",
+    "description": "Test offset pagination, cursor pagination, genre filtering, multi-key sorting, and invalid parameters.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:5000"
+    },
+    {
+      "key": "next_cursor",
+      "value": "0"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. List books - default",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Response contains items', function () { pm.expect(pm.response.json().items).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Offset pagination - first page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?strategy=offset&limit=2&offset=0"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Returns at most 2 books', function () { pm.expect(pm.response.json().items.length).to.be.at.most(2); });",
+              "pm.test('Uses offset strategy', function () { pm.expect(pm.response.json().strategy).to.eql('offset'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Offset pagination - second page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?strategy=offset&limit=2&offset=2"
+      }
+    },
+    {
+      "name": "4. Cursor pagination - first page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?strategy=cursor&limit=2"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Uses cursor strategy', function () { pm.expect(pm.response.json().strategy).to.eql('cursor'); });",
+              "var data = pm.response.json();",
+              "if (data.pagination.next_cursor !== null && data.pagination.next_cursor !== undefined) { pm.collectionVariables.set('next_cursor', data.pagination.next_cursor); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Cursor pagination - next page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?strategy=cursor&limit=2&cursor={{next_cursor}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Response contains items', function () { pm.expect(pm.response.json().items).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Filter books by genre",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?genre=Fantasy"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('All returned books are Fantasy', function () { pm.response.json().items.forEach(function (book) { pm.expect(book.genre).to.eql('Fantasy'); }); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Multi-key sort",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?sort=genre,-title"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Response contains sorted items', function () { pm.expect(pm.response.json().items).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Invalid strategy - expect 400",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?strategy=unknown"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 400', function () { pm.response.to.have.status(400); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Invalid sort field - expect 400",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?sort=unknown_field"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 400', function () { pm.response.to.have.status(400); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
