@@ -1,0 +1,44 @@
+extends: [spectral:oas]
+
+rules:
+  no-content-in-204:
+    description: A 204 response must not declare content.
+    severity: error
+    given: "$.paths[*][*].responses['204']"
+    then:
+      field: content
+      function: falsy
+
+  book-year-integer:
+    description: Book.year must have integer type.
+    severity: error
+    given: "$.components.schemas.Book.properties.year"
+    then:
+      field: type
+      function: enumeration
+      functionOptions:
+        values: [integer]
+
+  response-200-has-schema:
+    description: Every HTTP 200 response must have a non-empty JSON schema.
+    severity: error
+    resolved: false
+    given: "$.paths[*][*].responses['200']"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+          required: [content]
+          properties:
+            content:
+              type: object
+              required: [application/json]
+              properties:
+                application/json:
+                  type: object
+                  required: [schema]
+                  properties:
+                    schema:
+                      type: object
+                      minProperties: 1
