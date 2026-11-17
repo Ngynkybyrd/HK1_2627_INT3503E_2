@@ -39,5 +39,9 @@ class BooksUser(HttpUser):
             name="POST /books",
         )
 
-    # LAB 4: add search_by_year() and explain any injected failures.
-    # A client-side artificial failure is not a real HTTP 500 from the server.
+    @task(1)
+    def search_by_year(self):
+        self.client.get(
+            "/books", params={"year": random.randint(2015, 2025)},
+            name="GET /books?year=",
+        )
