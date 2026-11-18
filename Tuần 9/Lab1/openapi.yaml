@@ -1,0 +1,122 @@
+openapi: 3.0.3
+info:
+  title: Practice 1 User API
+  version: 1.0.0
+  description: URI path versioning with Flask Blueprints.
+servers:
+  - url: http://127.0.0.1:5000
+paths:
+  /api/v1/users/{uid}:
+    get:
+      summary: Get a user in the v1 format
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: User found
+          headers:
+            Sunset:
+              description: Planned retirement date for v1 (example).
+              schema:
+                type: string
+              example: 'Fri, 31 Dec 2027 23:59:59 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserV1'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v2/users/{uid}:
+    get:
+      summary: Get a user in the v2 format
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserV2'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v2/users:
+    post:
+      summary: Create a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '201':
+          description: User created
+          headers:
+            Location:
+              description: Path to the new user
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserV2'
+        '400':
+          description: Missing or invalid fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  parameters:
+    UserId:
+      name: uid
+      in: path
+      required: true
+      schema:
+        type: integer
+  responses:
+    NotFound:
+      description: User not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    NewUser:
+      type: object
+      required: [first_name, last_name, email]
+      properties:
+        first_name:
+          type: string
+          minLength: 1
+        last_name:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          minLength: 1
+    UserV1:
+      type: object
+      required: [id, full_name, email]
+      properties:
+        id:
+          type: integer
+        full_name:
+          type: string
+        email:
+          type: string
+    UserV2:
+      allOf:
+        - $ref: '#/components/schemas/NewUser'
+        - type: object
+          required: [id]
+          properties:
+            id:
+              type: integer
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
