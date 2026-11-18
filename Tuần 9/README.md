@@ -39,3 +39,13 @@ Gọi `POST /api/v2/users` với `first_name`, `last_name`, `email`: trả HTTP 
 Gọi `POST /api/v2/users` với dữ liệu thiếu hoặc rỗng: trả HTTP 400.![1794986084976](image/README/1794986084976.png)
 
 <!-- Thêm ảnh test dữ liệu không hợp lệ tại đây -->
+
+## Lab 2: Header Versioning
+
+- Không gửi header: `GET /users/1` trả v2 và `X-API-Version-Served: 2`.
+- Gửi `X-API-Version: 1`: trả `full_name` và header xác nhận phiên bản 1.
+- Gửi `X-API-Version: 2024-06-20`: trả dữ liệu theo phiên bản ngày.
+- Gửi `X-API-Version: 99`: trả HTTP 400.
+- Gọi user không tồn tại: trả HTTP 404.
+
+<!-- Thêm ảnh kiểm thử Lab 2 tại đây -->
